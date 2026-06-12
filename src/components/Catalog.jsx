@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { DAYS_EN, dishName, dishAlt, ingName } from '../i18n'
+import { DAYS_EN, dishName, dishAlt } from '../i18n'
+import SearchIcon from './SearchIcon'
 
 export default function Catalog({ t, lang, recipes, data, onOpen, onNew }) {
   const [query, setQuery] = useState('')
@@ -37,13 +38,13 @@ export default function Catalog({ t, lang, recipes, data, onOpen, onNew }) {
 
       <div className="searchrow">
         <div className="searchbox">
-          🔍
+          <SearchIcon />
           <input
             placeholder={t('search_ph')} value={query} autoComplete="off"
             onChange={(e) => setQuery(e.target.value)}
           />
           {query && (
-            <button className="clear" style={{ display: 'flex' }} onClick={() => setQuery('')}>✕</button>
+            <button className="clear" aria-label="Clear" onClick={() => setQuery('')}>✕</button>
           )}
         </div>
         <div className="chips">
@@ -55,27 +56,28 @@ export default function Catalog({ t, lang, recipes, data, onOpen, onNew }) {
       </div>
 
       <div className="cards">
-        {list.length === 0 && (
-          <div className="empty"><div className="big">🍽️</div>{t('no_results')}</div>
-        )}
+        {list.length === 0 && <div className="empty">{t('no_results')}</div>}
         {list.map((r) => {
           const rt = data.ratings[r.id] || 0
           const di = DAYS_EN.indexOf(r.day)
           return (
             <div key={r.id} className="rcard" onClick={() => onOpen(r.id)}>
-              <div className="daytag"><span className="d">{di >= 0 ? t('days_s')[di] : '🥣'}</span></div>
-              <div className="body">
-                <h3>
-                  {r.mark ? <span className="mark">{r.mark} </span> : null}
-                  {dishName(r, lang)} {data.favs[r.id] ? <span className="fav-ind">❤️</span> : null}
-                </h3>
-                <div className="sub">{dishAlt(r, lang)}</div>
-                <div className="meta">
-                  {r.custom && <span className="tag own" style={{ padding: '2px 8px' }}>{t('own')}</span>}
-                  {rt > 0 && <span className="stars-mini">{'★'.repeat(rt)}{'☆'.repeat(5 - rt)}</span>}
-                  <span>{r.ingredients.length} {t('ingredients').toLowerCase()}</span>
-                  {r.weeks && <span>· {r.weeks}</span>}
+              {(di >= 0 || data.favs[r.id]) && (
+                <div className="topline">
+                  {di >= 0 && <span className="daylbl">{t('days')[di]}</span>}
+                  {data.favs[r.id] && <span className="fav-ind">♥</span>}
                 </div>
+              )}
+              <h3>
+                {r.mark ? <span className="mark">{r.mark} </span> : null}
+                {dishName(r, lang)}
+              </h3>
+              <div className="sub">{dishAlt(r, lang)}</div>
+              <div className="meta">
+                {r.custom && <span className="tag own">{t('own')}</span>}
+                {rt > 0 && <span className="stars-mini">{'★'.repeat(rt)}{'☆'.repeat(5 - rt)}</span>}
+                <span>{r.ingredients.length} {t('ingredients').toLowerCase()}</span>
+                {r.weeks && <span>· {r.weeks}</span>}
               </div>
             </div>
           )

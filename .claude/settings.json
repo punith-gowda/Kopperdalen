@@ -1,0 +1,9 @@
+{
+  "env": {
+    "AWS_PROFILE": "",
+    "AWS_REGION": "",
+    "CLAUDE_CODE_USE_BEDROCK": "0"
+  },
+  "model": "claude-sonnet-4-6",
+  "awsAuthRefresh": ""
+}

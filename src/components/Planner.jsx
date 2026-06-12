@@ -1,5 +1,6 @@
 import { DAYS_EN, dishName } from '../i18n'
 import { shiftWeek, weekDates, weekNumber, weekYear } from '../lib/week'
+import Chevron from './Chevron'
 
 export default function Planner({
   t, lang, data, byId, weekKey, setWeekKey,
@@ -31,7 +32,7 @@ export default function Planner({
               />
               <button aria-label="More" onClick={() => onSetServings(d, sl, e.servings + 1)}>+</button>
             </div>
-            <button className="rm" aria-label="Remove" onClick={() => onRemove(d, sl)}>🗑️</button>
+            <button className="rm" onClick={() => onRemove(d, sl)}>{t('remove')}</button>
           </div>
         </div>
       )
@@ -55,12 +56,12 @@ export default function Planner({
     <>
       <div className="pagehead"><h2>{t('plan_title')}</h2><p>{t('plan_sub')}</p></div>
       <div className="weeknav">
-        <button aria-label="Previous week" onClick={() => setWeekKey(shiftWeek(weekKey, -1))}>‹</button>
+        <button aria-label="Previous week" onClick={() => setWeekKey(shiftWeek(weekKey, -1))}><Chevron dir="left" /></button>
         <div className="wk">
           <b>{t('week')} {weekNumber(weekKey)}</b>
           <small>{weekDates(weekKey)} · {weekYear(weekKey)}</small>
         </div>
-        <button aria-label="Next week" onClick={() => setWeekKey(shiftWeek(weekKey, 1))}>›</button>
+        <button aria-label="Next week" onClick={() => setWeekKey(shiftWeek(weekKey, 1))}><Chevron dir="right" /></button>
       </div>
       {dayBlocks}
       <div className="plannerfoot">

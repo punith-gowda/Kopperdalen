@@ -10,24 +10,31 @@ export const emptyData = () => ({
   customRecipes: [],  // recipes created in-app, shape matches recipes.json + custom:true
 })
 
+const normalize = (d) => ({
+  plans: d.plans || {},
+  favs: d.favs || {},
+  ratings: d.ratings || {},
+  checked: d.checked || {},
+  customRecipes: d.customRecipes || [],
+})
+
 export function loadData() {
   try {
     const raw = localStorage.getItem(KEY)
     if (!raw) return { data: emptyData(), lang: 'sv' }
     const d = JSON.parse(raw)
-    return {
-      data: {
-        plans: d.plans || {},
-        favs: d.favs || {},
-        ratings: d.ratings || {},
-        checked: d.checked || {},
-        customRecipes: d.customRecipes || [],
-      },
-      lang: d.lang || 'sv',
-    }
+    return { data: normalize(d), lang: d.lang || 'sv' }
   } catch {
     return { data: emptyData(), lang: 'sv' }
   }
+}
+
+// Throws if the text is not a backup produced by exportBackup.
+export function parseBackup(text) {
+  const d = JSON.parse(text)
+  if (!d || typeof d !== 'object' || Array.isArray(d)) throw new Error('not a backup')
+  if (!('plans' in d) && !('customRecipes' in d) && !('favs' in d)) throw new Error('not a backup')
+  return { data: normalize(d), lang: d.lang === 'en' ? 'en' : 'sv' }
 }
 
 let timer = null

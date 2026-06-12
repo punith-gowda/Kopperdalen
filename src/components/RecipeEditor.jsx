@@ -70,12 +70,24 @@ export default function RecipeEditor({ t, lang, draft, onCancel, onSave, showToa
         <div className="lbl2">{t('ingredients')}</div>
         <div className="hint">{t('f_ing_hint')}</div>
         {ings.map((i, idx) => (
-          <div key={idx} className="ingrow">
+          <div key={idx} className="ingcard">
+            <div className="ichead">
+              <b>{t('ing_ph')} {idx + 1}</b>
+              <button className="icrm" onClick={() => rmRow(idx)}>{t('remove')}</button>
+            </div>
             <input type="text" placeholder={t('ing_ph')} value={i.sv} onChange={(e) => setIng(idx, 'sv', e.target.value)} />
-            <input type="text" inputMode="decimal" placeholder={t('qty_ph')} value={i.qtyText} onChange={(e) => setIng(idx, 'qtyText', e.target.value)} />
-            <input type="text" list="units" placeholder={t('unit_ph')} value={i.unit} onChange={(e) => setIng(idx, 'unit', e.target.value)} />
-            <button className="rmrow" aria-label="Remove" onClick={() => rmRow(idx)}>✕</button>
-            <select className="catrow" value={i.cat} onChange={(e) => setIng(idx, 'cat', e.target.value)}>
+            <div className="qtyrow">
+              <div>
+                <div className="flbl">{t('qty_ph')}</div>
+                <input type="text" inputMode="decimal" placeholder={t('to_taste')} value={i.qtyText} onChange={(e) => setIng(idx, 'qtyText', e.target.value)} />
+              </div>
+              <div>
+                <div className="flbl">{t('unit_ph')}</div>
+                <input type="text" list="units" value={i.unit} onChange={(e) => setIng(idx, 'unit', e.target.value)} />
+              </div>
+            </div>
+            <div className="flbl">{t('f_cat')}</div>
+            <select value={i.cat} onChange={(e) => setIng(idx, 'cat', e.target.value)}>
               {CAT_ORDER.map((c) => <option key={c} value={c}>{t('cats')[c] || c}</option>)}
             </select>
           </div>

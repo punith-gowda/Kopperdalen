@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import RECIPES from './data/recipes.json'
 import { T, dishName } from './i18n'
 import { isoWeekKey } from './lib/week'
-import { loadData, saveData } from './lib/storage'
+import { loadData, saveData, exportBackup, parseBackup } from './lib/storage'
 import Catalog from './components/Catalog'
 import RecipeDetail from './components/RecipeDetail'
 import RecipeEditor from './components/RecipeEditor'
@@ -10,7 +10,34 @@ import Planner from './components/Planner'
 import Shopping from './components/Shopping'
 import AddToPlanModal from './components/AddToPlanModal'
 import PickDishModal from './components/PickDishModal'
+import Settings from './components/Settings'
 import Toast from './components/Toast'
+
+const NavIcon = ({ d }) => (
+  <svg viewBox="0 0 24 24" aria-hidden="true">{d}</svg>
+)
+const ICONS = {
+  book: (
+    <>
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+    </>
+  ),
+  calendar: (
+    <>
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+    </>
+  ),
+  cart: (
+    <>
+      <circle cx="9" cy="21" r="1" />
+      <circle cx="20" cy="21" r="1" />
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+    </>
+  ),
+  sliders: <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6" />,
+}
 
 export default function App() {
   const initial = useMemo(() => loadData(), [])
@@ -22,6 +49,7 @@ export default function App() {
   const [editorReturn, setEditorReturn] = useState(null)
   const [modal, setModal] = useState(null) // {type:'add',recipeId} | {type:'pick',day,slot}
   const [weekKey, setWeekKey] = useState(isoWeekKey(new Date()))
+  const [prevTab, setPrevTab] = useState('cat')
   const [toast, setToast] = useState(null)
   const [savedFlash, setSavedFlash] = useState(false)
 
@@ -120,6 +148,22 @@ export default function App() {
     setDetailId(rec.id)
   }
 
+  const importBackup = (file) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      try {
+        const res = parseBackup(reader.result)
+        if (!window.confirm(t('import_confirm'))) return
+        setData(res.data)
+        setLang(res.lang)
+        showToast(t('import_done'))
+      } catch {
+        showToast(t('import_bad'))
+      }
+    }
+    reader.readAsText(file)
+  }
+
   const deleteRecipe = (id) => {
     if (!window.confirm(t('delete_confirm'))) return
     update((d) => {
@@ -183,6 +227,13 @@ export default function App() {
         onClear={() => update((d) => { d.plans[weekKey] = {}; d.checked[weekKey] = {} })}
       />
     )
+  } else if (tab === 'set') {
+    view = (
+      <Settings
+        t={t} onExport={() => exportBackup(data, lang)} onImport={importBackup}
+        onBack={() => go(prevTab)}
+      />
+    )
   } else {
     view = (
       <Shopping
@@ -206,6 +257,12 @@ export default function App() {
             <h1>Recept · Planera · Handla</h1>
           </div>
           <span className="savebadge">{savedFlash ? '✓ ' + t('saved') : ''}</span>
+          <button
+            className={`hbtn ${tab === 'set' ? 'on' : ''}`} aria-label={t('nav_settings')}
+            onClick={() => { if (tab !== 'set') { setPrevTab(tab); go('set') } }}
+          >
+            <NavIcon d={ICONS.sliders} />
+          </button>
           <div className="lang-toggle" role="group" aria-label="Language">
             <button className={lang === 'sv' ? 'on' : ''} onClick={() => setLang('sv')}>SV</button>
             <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')}>EN</button>
@@ -213,18 +270,20 @@ export default function App() {
         </div>
       </header>
 
-      <main className="wrap">{view}</main>
+      <main className="wrap">
+        <div className="view" key={tab + ':' + (editor ? 'editor' : detailId || '')}>{view}</div>
+      </main>
 
       <nav>
         <div className="wrap">
           <button className={tab === 'cat' ? 'on' : ''} onClick={() => go('cat')}>
-            <span className="ic">📖</span><span>{t('nav_recipes')}</span>
+            <span className="ic"><NavIcon d={ICONS.book} /></span><span>{t('nav_recipes')}</span>
           </button>
           <button className={tab === 'plan' ? 'on' : ''} onClick={() => go('plan')}>
-            <span className="ic">🗓️</span><span>{t('nav_plan')}</span>
+            <span className="ic"><NavIcon d={ICONS.calendar} /></span><span>{t('nav_plan')}</span>
           </button>
           <button className={tab === 'shop' ? 'on' : ''} onClick={() => go('shop')}>
-            <span className="ic">🛒</span><span>{t('nav_shop')}</span>
+            <span className="ic"><NavIcon d={ICONS.cart} /></span><span>{t('nav_shop')}</span>
           </button>
         </div>
       </nav>

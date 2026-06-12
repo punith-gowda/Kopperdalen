@@ -20,14 +20,14 @@ export default function RecipeDetail({
       <button className="backbtn" onClick={onBack}>← {t('back')}</button>
 
       <div className="dhead">
-        <h2 className="serif">{r.mark ? r.mark + ' ' : ''}{dishName(r, lang)}</h2>
+        <h2>{r.mark ? r.mark + ' ' : ''}{dishName(r, lang)}</h2>
         <div className="sub">{dishAlt(r, lang)}</div>
         <div className="row">
-          {di >= 0 && <span className="tag f">{t('days')[di]}</span>}
+          {di >= 0 && <span className="tag">{t('days')[di]}</span>}
           {r.custom && <span className="tag own">{t('own')}</span>}
           {r.weeks && <span className="tag">{t('weeks_on_menu')}: {r.weeks}</span>}
-          <button className={`iconbtn ${fav ? 'on' : ''}`} aria-label="Favorite" onClick={() => onFav(r.id)}>
-            {fav ? '❤️' : '🤍'}
+          <button className={`favbtn ${fav ? 'on' : ''}`} onClick={() => onFav(r.id)}>
+            <span className="h">{fav ? '♥' : '♡'}</span> {t('fav')}
           </button>
         </div>
         <div className="ratingrow">

@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { CAT_ORDER, ingName } from '../i18n'
 import { fmtQty } from '../lib/format'
 import { shiftWeek, weekDates, weekNumber } from '../lib/week'
+import Chevron from './Chevron'
 
 function buildItems(data, byId, weekKey) {
   const agg = {}
@@ -27,9 +28,9 @@ export default function Shopping({ t, lang, data, byId, weekKey, setWeekKey, onT
 
   const weekNav = (
     <div className="weeknav">
-      <button onClick={() => setWeekKey(shiftWeek(weekKey, -1))}>‹</button>
+      <button aria-label="Previous week" onClick={() => setWeekKey(shiftWeek(weekKey, -1))}><Chevron dir="left" /></button>
       <div className="wk"><b>{t('week')} {weekNumber(weekKey)}</b><small>{weekDates(weekKey)}</small></div>
-      <button onClick={() => setWeekKey(shiftWeek(weekKey, 1))}>›</button>
+      <button aria-label="Next week" onClick={() => setWeekKey(shiftWeek(weekKey, 1))}><Chevron dir="right" /></button>
     </div>
   )
 
@@ -38,7 +39,7 @@ export default function Shopping({ t, lang, data, byId, weekKey, setWeekKey, onT
       <>
         <div className="pagehead"><h2>{t('shop_title')}</h2><p>{t('shop_sub')}</p></div>
         {weekNav}
-        <div className="empty"><div className="big">🛒</div>{t('nothing_planned')}</div>
+        <div className="empty">{t('nothing_planned')}</div>
       </>
     )
   }
