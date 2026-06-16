@@ -1,13 +1,15 @@
 import { useState } from 'react'
-import { dishName } from '../i18n'
+import { DAYS_EN, dishName } from '../i18n'
 import { weekDates, weekNumber } from '../lib/week'
 
 const PRESETS = [4, 8, 12, 20, 40, 60]
 
-export default function AddToPlanModal({ t, lang, recipe, weekKey, dayFree, onCancel, onConfirm }) {
+export default function AddToPlanModal({ t, lang, recipe, weekKey, dayFree, defaultServ, onCancel, onConfirm }) {
+  // prefer the recipe's own day when it has room, else the first free day
+  const ownDay = DAYS_EN.indexOf(recipe.day)
   const firstFree = (() => { for (let d = 0; d < 5; d++) if (dayFree(d) >= 0) return d; return 0 })()
-  const [day, setDay] = useState(firstFree)
-  const [serv, setServ] = useState(4)
+  const [day, setDay] = useState(ownDay >= 0 && dayFree(ownDay) >= 0 ? ownDay : firstFree)
+  const [serv, setServ] = useState(defaultServ || 4)
 
   return (
     <div className="modal-bg" onClick={(e) => e.target === e.currentTarget && onCancel()}>

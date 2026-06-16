@@ -29,10 +29,7 @@ export default function Catalog({ t, lang, recipes, data, onOpen, onNew }) {
   return (
     <>
       <div className="pagehead rowed">
-        <div>
-          <h2>{t('cat_title')}</h2>
-          <p>{t('cat_sub').replace('%n', recipes.length)}</p>
-        </div>
+        <h2>{t('cat_title')}</h2>
         <button className="newbtn" onClick={onNew}>{t('new_recipe')}</button>
       </div>
 

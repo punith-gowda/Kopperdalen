@@ -6,7 +6,7 @@ export default function RecipeDetail({
   t, lang, recipe: r, data,
   onBack, onFav, onRate, onAddToPlan, onEdit, onDuplicate, onDelete,
 }) {
-  const [servings, setServings] = useState(4)
+  const [servings, setServings] = useState(data.servPrefs?.[r.id] || 4)
   const [doneSteps, setDoneSteps] = useState({})
   const f = servings / 4
   const rt = data.ratings[r.id] || 0

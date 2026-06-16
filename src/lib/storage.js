@@ -8,6 +8,7 @@ export const emptyData = () => ({
   ratings: {},        // { [recipeId]: 1..5 }
   checked: {},        // { [weekKey]: { [ingKey]: true } }
   customRecipes: [],  // recipes created in-app, shape matches recipes.json + custom:true
+  servPrefs: {},      // { [recipeId]: last-used servings } — defaults for planning
 })
 
 const normalize = (d) => ({
@@ -16,6 +17,7 @@ const normalize = (d) => ({
   ratings: d.ratings || {},
   checked: d.checked || {},
   customRecipes: d.customRecipes || [],
+  servPrefs: d.servPrefs || {},
 })
 
 export function loadData() {

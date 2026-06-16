@@ -97,7 +97,10 @@ export default function App() {
   const addToPlan = (day, recipeId, servings) => {
     const sl = dayFree(day)
     if (sl < 0) { showToast(t('day_full')); return false }
-    update((d) => { planFor(d)[day + '-' + sl] = { id: recipeId, servings } })
+    update((d) => {
+      planFor(d)[day + '-' + sl] = { id: recipeId, servings }
+      d.servPrefs[recipeId] = servings
+    })
     showToast(t('added'))
     return true
   }
@@ -170,6 +173,7 @@ export default function App() {
       d.customRecipes = d.customRecipes.filter((r) => r.id !== id)
       delete d.favs[id]
       delete d.ratings[id]
+      delete d.servPrefs[id]
     })
     setDetailId(null)
     showToast(t('recipe_deleted'))
@@ -215,7 +219,7 @@ export default function App() {
         onPick={(day, slot) => setModal({ type: 'pick', day, slot })}
         onSetServings={(day, slot, v) => update((d) => {
           const e = planFor(d)[day + '-' + slot]
-          if (e) e.servings = Math.min(999, Math.max(1, v))
+          if (e) { e.servings = Math.min(999, Math.max(1, v)); d.servPrefs[e.id] = e.servings }
         })}
         onRemove={(day, slot) => { update((d) => { delete planFor(d)[day + '-' + slot] }); showToast(t('removed')) }}
         onCopyPrev={(prevKey) => {
@@ -291,6 +295,7 @@ export default function App() {
       {modal?.type === 'add' && byId[modal.recipeId] && (
         <AddToPlanModal
           t={t} lang={lang} recipe={byId[modal.recipeId]} weekKey={weekKey} dayFree={dayFree}
+          defaultServ={data.servPrefs[modal.recipeId] || 4}
           onCancel={() => setModal(null)}
           onConfirm={(day, servings) => {
             if (addToPlan(day, modal.recipeId, servings)) {
@@ -304,7 +309,10 @@ export default function App() {
           t={t} lang={lang} recipes={allRecipes} day={modal.day}
           onCancel={() => setModal(null)}
           onPick={(id) => {
-            update((d) => { planFor(d)[modal.day + '-' + modal.slot] = { id, servings: 4 } })
+            update((d) => {
+              const servings = d.servPrefs[id] || 4
+              planFor(d)[modal.day + '-' + modal.slot] = { id, servings }
+            })
             setModal(null); showToast(t('added'))
           }}
         />

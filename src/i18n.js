@@ -3,7 +3,7 @@ export const T = {
   sv: {
     nav_recipes: 'Recept', nav_plan: 'Planera', nav_shop: 'Handla', nav_settings: 'Inställningar',
     settings_title: 'Inställningar',
-    cat_title: 'Receptkatalog', cat_sub: '%n recept · sök på namn eller ingrediens',
+    cat_title: 'Receptkatalog',
     search_ph: 'Sök recept eller ingrediens…', all: 'Alla', favs: 'Favoriter',
     results: '%n recept', no_results: 'Inga recept matchar. Prova ett annat sökord.',
     back: 'Tillbaka', servings: 'Portioner', ingredients: 'Ingredienser', preparation: 'Tillagning',
@@ -22,6 +22,7 @@ export const T = {
     add: 'Lägg till', cancel: 'Avbryt', added: 'Tillagd i planen ✓', removed: 'Borttagen',
     pick_recipe: 'Välj rätt', saved: 'sparat',
     fav: 'Favorit', remove: 'Ta bort',
+    pick_day_match: 'Passar %d', pick_all: 'Alla rätter',
     days: ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag'],
     days_s: ['Mån', 'Tis', 'Ons', 'Tor', 'Fre'],
     week_copied: 'Förra veckans plan kopierad ✓', nothing_to_copy: 'Förra veckan är tom',
@@ -47,7 +48,7 @@ export const T = {
   en: {
     nav_recipes: 'Recipes', nav_plan: 'Plan', nav_shop: 'Shop', nav_settings: 'Settings',
     settings_title: 'Settings',
-    cat_title: 'Recipe Catalogue', cat_sub: '%n recipes · search by name or ingredient',
+    cat_title: 'Recipe Catalogue',
     search_ph: 'Search recipes or ingredients…', all: 'All', favs: 'Favorites',
     results: '%n recipes', no_results: 'No recipes match. Try another search.',
     back: 'Back', servings: 'Servings', ingredients: 'Ingredients', preparation: 'Preparation',
@@ -66,6 +67,7 @@ export const T = {
     add: 'Add', cancel: 'Cancel', added: 'Added to plan ✓', removed: 'Removed',
     pick_recipe: 'Choose a dish', saved: 'saved',
     fav: 'Favorite', remove: 'Remove',
+    pick_day_match: 'Fits %d', pick_all: 'All dishes',
     days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
     days_s: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
     week_copied: "Last week's plan copied ✓", nothing_to_copy: 'Last week is empty',

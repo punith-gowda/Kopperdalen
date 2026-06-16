@@ -39,6 +39,9 @@ router, no CSS framework — plain CSS in `src/styles.css`.
   mutate `data` directly in components.
 - Plan storage: `data.plans[weekKey]["{day}-{slot}"] = { id, servings }`,
   day 0–4 (Mon–Fri), slot 0–2, weekKey like `"2026-W24"` (ISO week).
+- `data.servPrefs[recipeId]` = last-used servings for that recipe; written
+  on every add-to-plan and servings change, used as the default everywhere
+  servings are picked.
 
 ## Testing changes
 

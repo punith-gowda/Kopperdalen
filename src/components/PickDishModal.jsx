@@ -1,16 +1,22 @@
 import { useMemo, useState } from 'react'
-import { dishName } from '../i18n'
+import { DAYS_EN, dishName } from '../i18n'
 import SearchIcon from './SearchIcon'
 
 export default function PickDishModal({ t, lang, recipes, day, onCancel, onPick }) {
   const [q, setQ] = useState('')
-  const list = useMemo(() => {
+  // dishes that belong to the chosen weekday are listed first
+  const { match, rest } = useMemo(() => {
     const s = q.toLowerCase()
-    return recipes
+    const list = recipes
       .filter((r) => !s || r.sv.toLowerCase().includes(s) || (r.en || '').toLowerCase().includes(s))
       .sort((a, b) => dishName(a, lang).localeCompare(dishName(b, lang), lang))
       .slice(0, 60)
-  }, [recipes, q, lang])
+    const dayEn = DAYS_EN[day]
+    return {
+      match: list.filter((r) => r.day === dayEn),
+      rest: list.filter((r) => r.day !== dayEn),
+    }
+  }, [recipes, q, lang, day])
 
   return (
     <div className="modal-bg" onClick={(e) => e.target === e.currentTarget && onCancel()}>
@@ -29,8 +35,15 @@ export default function PickDishModal({ t, lang, recipes, day, onCancel, onPick 
           </div>
         </div>
         <div className="picker-list">
-          {list.length === 0 && <div className="empty">{t('no_results')}</div>}
-          {list.map((r) => (
+          {match.length === 0 && rest.length === 0 && <div className="empty">{t('no_results')}</div>}
+          {match.length > 0 && <div className="pkgroup">{t('pick_day_match').replace('%d', t('days')[day])}</div>}
+          {match.map((r) => (
+            <button key={r.id} className="pk" onClick={() => onPick(r.id)}>
+              {r.mark ? r.mark + ' ' : ''}{dishName(r, lang)}
+            </button>
+          ))}
+          {match.length > 0 && rest.length > 0 && <div className="pkgroup">{t('pick_all')}</div>}
+          {rest.map((r) => (
             <button key={r.id} className="pk" onClick={() => onPick(r.id)}>
               {r.mark ? r.mark + ' ' : ''}{dishName(r, lang)}
             </button>
