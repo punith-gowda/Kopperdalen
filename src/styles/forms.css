@@ -1,0 +1,26 @@
+/* Editor form */
+.frm{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-top:12px}
+.frm > .lbl2:first-child{margin-top:0}
+.frm .two .lbl2{margin-top:16px}
+.frm input[type=text],.frm input[type=number],.frm select,.frm textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:12px 13px;font-size:1rem;background:var(--card);color:var(--ink);font-family:inherit}
+.frm select{
+  appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:44px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232F5D46' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;background-size:18px;
+}
+.frm input:focus,.frm select:focus,.frm textarea:focus{border-color:var(--accent);outline:none}
+.frm textarea{min-height:170px;line-height:1.5;resize:vertical}
+.frm .hint{font-size:.8rem;color:var(--muted);margin:4px 0 10px}
+.frm .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ingcard{border:1.5px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:var(--bg)}
+.ingcard .ichead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.ingcard .ichead b{font-size:.74rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.ingcard .icrm{border:0;background:none;color:var(--danger);font-size:.82rem;font-weight:700;cursor:pointer;padding:8px 4px}
+.ingcard .qtyrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ingcard .flbl{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:10px 0 4px}
+.addingbtn{border:1.5px dashed var(--accent);background:none;border-radius:10px;padding:14px;width:100%;font-size:.95rem;font-weight:700;color:var(--accent);cursor:pointer;margin-top:6px}
+
+/* Backup (settings) */
+.backup{margin-bottom:24px}
+.backup p{font-size:.86rem;color:var(--muted);line-height:1.45}
+.backuprow{display:flex;gap:8px;margin-top:12px}

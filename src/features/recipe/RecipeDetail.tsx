@@ -1,19 +1,34 @@
 import { useState } from 'react'
-import { DAYS_EN, dishName, dishAlt, ingName } from '../i18n'
-import { fmtQty } from '../lib/format'
+import { DAYS_EN, dishName, dishAlt, ingName } from '../../i18n'
+import { fmtQty } from '../../lib/format'
+import type { AppData, Lang, Recipe, RecipeId, TFunc } from '../../types'
+
+interface RecipeDetailProps {
+  t: TFunc
+  lang: Lang
+  recipe: Recipe
+  data: AppData
+  onBack: () => void
+  onFav: (id: RecipeId) => void
+  onRate: (id: RecipeId, n: number) => void
+  onAddToPlan: (id: RecipeId) => void
+  onEdit: (r: Recipe) => void
+  onDuplicate: (r: Recipe) => void
+  onDelete: (id: RecipeId) => void
+}
 
 export default function RecipeDetail({
   t, lang, recipe: r, data,
   onBack, onFav, onRate, onAddToPlan, onEdit, onDuplicate, onDelete,
-}) {
+}: RecipeDetailProps) {
   const [servings, setServings] = useState(data.servPrefs?.[r.id] || 4)
-  const [doneSteps, setDoneSteps] = useState({})
+  const [doneSteps, setDoneSteps] = useState<Record<number, boolean>>({})
   const f = servings / 4
   const rt = data.ratings[r.id] || 0
   const di = DAYS_EN.indexOf(r.day)
   const fav = !!data.favs[r.id]
 
-  const setServ = (v) => setServings(Math.min(999, Math.max(1, v || 4)))
+  const setServ = (v: number) => setServings(Math.min(999, Math.max(1, v || 4)))
 
   return (
     <div className="detail">

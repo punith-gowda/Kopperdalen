@@ -1,11 +1,22 @@
 import { useMemo } from 'react'
-import { CAT_ORDER, ingName } from '../i18n'
-import { fmtQty } from '../lib/format'
-import { shiftWeek, weekDates, weekNumber } from '../lib/week'
-import Chevron from './Chevron'
+import { CAT_ORDER, ingName } from '../../i18n'
+import { fmtQty } from '../../lib/format'
+import { shiftWeek, weekDates, weekNumber } from '../../lib/week'
+import Chevron from '../../components/icons/Chevron'
+import type { AppData, Lang, RecipeMap, TFunc } from '../../types'
 
-function buildItems(data, byId, weekKey) {
-  const agg = {}
+interface AggItem {
+  key: string
+  sv: string
+  en: string | null
+  unit: string
+  cat: string
+  qty: number
+  toTaste: boolean
+}
+
+function buildItems(data: AppData, byId: RecipeMap, weekKey: string): AggItem[] {
+  const agg: Record<string, AggItem> = {}
   const plan = data.plans[weekKey] || {}
   for (const e of Object.values(plan)) {
     if (!e || !byId[e.id]) continue
@@ -21,7 +32,19 @@ function buildItems(data, byId, weekKey) {
   return Object.values(agg)
 }
 
-export default function Shopping({ t, lang, data, byId, weekKey, setWeekKey, onToggle, onUncheckAll, showToast }) {
+interface ShoppingProps {
+  t: TFunc
+  lang: Lang
+  data: AppData
+  byId: RecipeMap
+  weekKey: string
+  setWeekKey: (key: string) => void
+  onToggle: (key: string) => void
+  onUncheckAll: () => void
+  showToast: (msg: string) => void
+}
+
+export default function Shopping({ t, lang, data, byId, weekKey, setWeekKey, onToggle, onUncheckAll, showToast }: ShoppingProps) {
   const items = useMemo(() => buildItems(data, byId, weekKey), [data.plans, byId, weekKey])
   const checked = data.checked[weekKey] || {}
   const done = items.filter((i) => checked[i.key]).length
@@ -44,7 +67,7 @@ export default function Shopping({ t, lang, data, byId, weekKey, setWeekKey, onT
     )
   }
 
-  const groups = {}
+  const groups: Record<string, AggItem[]> = {}
   items.forEach((i) => (groups[i.cat] = groups[i.cat] || []).push(i))
 
   const copyList = () => {

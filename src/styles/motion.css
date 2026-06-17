@@ -1,0 +1,49 @@
+/* ---- Motion ----
+   Feedback and orientation only: state changes confirm themselves,
+   screen changes announce themselves. Color transitions are always on;
+   anything that moves is gated behind prefers-reduced-motion. */
+.cb{transition:background-color .15s ease,border-color .15s ease}
+.shopitem .nm,.shopitem .q{transition:color .2s ease}
+.steps li::before{transition:background-color .2s ease,color .2s ease}
+.steps li span{transition:color .2s ease}
+.favbtn{transition:border-color .15s ease,background-color .15s ease,color .15s ease}
+.chip,.pk{transition:border-color .15s ease,background-color .15s ease}
+.progress div{transition:width .25s ease}
+
+@media(prefers-reduced-motion:no-preference){
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes sheet{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  @keyframes confirm{0%{transform:scale(.6)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+
+  .view{animation:rise .28s ease both}
+  .cards .rcard{animation:rise .3s ease backwards}
+  .cards .rcard:nth-child(2){animation-delay:.04s}
+  .cards .rcard:nth-child(3){animation-delay:.08s}
+  .cards .rcard:nth-child(4){animation-delay:.12s}
+  .cards .rcard:nth-child(5){animation-delay:.16s}
+  .cards .rcard:nth-child(n+6){animation-delay:.2s}
+
+  .modal-bg{animation:fade .2s ease}
+  .modal{animation:sheet .32s cubic-bezier(.32,.72,.24,1)}
+
+  .shopitem.done .cb{animation:confirm .3s ease}
+  .steps li.done::before{animation:confirm .3s ease}
+  .favbtn.on .h{display:inline-block;animation:confirm .3s ease}
+
+  .btn-primary,.btn-ghost,.ghostbtn,.dangerbtn,.newbtn,.addplanbtn,.addday,
+  .chip,.pk,.closebtn,.favbtn,.optgrid button,.presetchips button,
+  .stepper button,.servpick button,.weeknav button,.slot .srv button{
+    transition-property:transform,background-color,border-color,color;
+    transition-duration:.12s,.15s,.15s,.15s;transition-timing-function:ease
+  }
+  .btn-primary:active,.btn-ghost:active,.ghostbtn:active,.dangerbtn:active,
+  .newbtn:active,.addplanbtn:active,.addday:active,.chip:active,.pk:active,
+  .closebtn:active,.favbtn:active,.optgrid button:active,.presetchips button:active,
+  .stepper button:active,.servpick button:active,.weeknav button:active,
+  .slot .srv button:active{transform:scale(.96)}
+
+  nav button .ic{transition:transform .15s ease}
+  nav button.on .ic{transform:translateY(-1px)}
+  .toast{animation:pop .2s ease}
+}

@@ -1,10 +1,22 @@
 import { useState } from 'react'
-import { DAYS_EN, dishName } from '../i18n'
-import { weekDates, weekNumber } from '../lib/week'
+import { DAYS_EN, dishName } from '../../i18n'
+import { weekDates, weekNumber } from '../../lib/week'
+import type { Lang, Recipe, TFunc } from '../../types'
 
 const PRESETS = [4, 8, 12, 20, 40, 60]
 
-export default function AddToPlanModal({ t, lang, recipe, weekKey, dayFree, defaultServ, onCancel, onConfirm }) {
+interface AddToPlanModalProps {
+  t: TFunc
+  lang: Lang
+  recipe: Recipe
+  weekKey: string
+  dayFree: (day: number) => number
+  defaultServ: number
+  onCancel: () => void
+  onConfirm: (day: number, servings: number) => void
+}
+
+export default function AddToPlanModal({ t, lang, recipe, weekKey, dayFree, defaultServ, onCancel, onConfirm }: AddToPlanModalProps) {
   // prefer the recipe's own day when it has room, else the first free day
   const ownDay = DAYS_EN.indexOf(recipe.day)
   const firstFree = (() => { for (let d = 0; d < 5; d++) if (dayFree(d) >= 0) return d; return 0 })()
@@ -19,7 +31,7 @@ export default function AddToPlanModal({ t, lang, recipe, weekKey, dayFree, defa
 
         <div className="lbl2">{t('pick_day')}</div>
         <div className="optgrid">
-          {t('days_s').map((d, i) => (
+          {(t('days_s') as string[]).map((d, i) => (
             <button
               key={d} className={day === i ? 'on' : ''} disabled={dayFree(i) < 0}
               onClick={() => setDay(i)}

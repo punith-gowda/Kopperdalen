@@ -1,5 +1,9 @@
 // UI strings. Dish/ingredient names come from the data; these are interface labels.
-export const T = {
+import type { Ingredient, Lang, Recipe } from './types'
+
+// Values are mostly strings, but some keys hold arrays ('days') or nested
+// objects ('cats'); callers index the result structurally.
+export const T: Record<Lang, Record<string, any>> = {
   sv: {
     nav_recipes: 'Recept', nav_plan: 'Planera', nav_shop: 'Handla', nav_settings: 'Inställningar',
     settings_title: 'Inställningar',
@@ -92,11 +96,11 @@ export const T = {
   },
 }
 
-export const CAT_ORDER = ['Grönsaker', 'Frukt', 'Kött', 'Fisk', 'Mejeri', 'Bröd & spannmål', 'Konserver', 'Skafferi', 'Övrigt']
-export const DAYS_EN = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
-export const UNITS = ['g', 'kg', 'dl', 'l', 'msk', 'tsk', 'krm', 'st', 'klyftor', 'knippe', 'port']
+export const CAT_ORDER: string[] = ['Grönsaker', 'Frukt', 'Kött', 'Fisk', 'Mejeri', 'Bröd & spannmål', 'Konserver', 'Skafferi', 'Övrigt']
+export const DAYS_EN: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+export const UNITS: string[] = ['g', 'kg', 'dl', 'l', 'msk', 'tsk', 'krm', 'st', 'klyftor', 'knippe', 'port']
 
 // Name helpers: prefer the selected language, fall back to Swedish
-export const dishName = (r, lang) => (lang === 'en' && r.en ? r.en : r.sv)
-export const dishAlt = (r, lang) => (lang === 'en' ? r.sv : r.en || '')
-export const ingName = (i, lang) => (lang === 'en' && i.en ? i.en : i.sv)
+export const dishName = (r: Recipe, lang: Lang): string => (lang === 'en' && r.en ? r.en : r.sv)
+export const dishAlt = (r: Recipe, lang: Lang): string => (lang === 'en' ? r.sv : r.en || '')
+export const ingName = (i: Ingredient, lang: Lang): string => (lang === 'en' && i.en ? i.en : i.sv)

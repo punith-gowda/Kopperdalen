@@ -1,8 +1,18 @@
 import { useMemo, useState } from 'react'
-import { DAYS_EN, dishName } from '../i18n'
-import SearchIcon from './SearchIcon'
+import { DAYS_EN, dishName } from '../../i18n'
+import SearchIcon from '../../components/icons/SearchIcon'
+import type { Lang, Recipe, RecipeId, TFunc } from '../../types'
 
-export default function PickDishModal({ t, lang, recipes, day, onCancel, onPick }) {
+interface PickDishModalProps {
+  t: TFunc
+  lang: Lang
+  recipes: Recipe[]
+  day: number
+  onCancel: () => void
+  onPick: (id: RecipeId) => void
+}
+
+export default function PickDishModal({ t, lang, recipes, day, onCancel, onPick }: PickDishModalProps) {
   const [q, setQ] = useState('')
   // dishes that belong to the chosen weekday are listed first
   const { match, rest } = useMemo(() => {

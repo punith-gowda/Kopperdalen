@@ -1,5 +1,7 @@
 // Quantity formatting: sensible rounding, Swedish decimal comma in sv mode
-export function fmtQty(q, lang) {
+import type { Lang } from '../types'
+
+export function fmtQty(q: number | null, lang: Lang): string {
   if (q == null) return ''
   let v = Math.round(q * 100) / 100
   if (v >= 100) v = Math.round(v)
@@ -9,7 +11,7 @@ export function fmtQty(q, lang) {
   return s
 }
 
-export function parseQty(raw) {
+export function parseQty(raw: string): number | null {
   const t = String(raw).trim().replace(',', '.')
   if (t === '') return null
   const n = parseFloat(t)

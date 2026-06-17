@@ -1,15 +1,31 @@
-import { DAYS_EN, dishName } from '../i18n'
-import { shiftWeek, weekDates, weekNumber, weekYear } from '../lib/week'
-import Chevron from './Chevron'
+import { dishName } from '../../i18n'
+import { shiftWeek, weekDates, weekNumber, weekYear } from '../../lib/week'
+import Chevron from '../../components/icons/Chevron'
+import type { AppData, Lang, RecipeId, RecipeMap, TFunc } from '../../types'
+
+interface PlannerProps {
+  t: TFunc
+  lang: Lang
+  data: AppData
+  byId: RecipeMap
+  weekKey: string
+  setWeekKey: (key: string) => void
+  onOpenRecipe: (id: RecipeId) => void
+  onPick: (day: number, slot: number) => void
+  onSetServings: (day: number, slot: number, v: number) => void
+  onRemove: (day: number, slot: number) => void
+  onCopyPrev: (prevKey: string) => void
+  onClear: () => void
+}
 
 export default function Planner({
   t, lang, data, byId, weekKey, setWeekKey,
   onOpenRecipe, onPick, onSetServings, onRemove, onCopyPrev, onClear,
-}) {
+}: PlannerProps) {
   const plan = data.plans[weekKey] || {}
   let total = 0
 
-  const dayBlocks = t('days').map((dn, d) => {
+  const dayBlocks = (t('days') as string[]).map((dn, d) => {
     let count = 0
     const rows = [0, 1, 2].map((sl) => {
       const e = plan[d + '-' + sl]

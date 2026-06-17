@@ -1,27 +1,62 @@
 import { useState } from 'react'
-import { CAT_ORDER, DAYS_EN, UNITS } from '../i18n'
-import { fmtQty, parseQty } from '../lib/format'
+import { CAT_ORDER, DAYS_EN, UNITS } from '../../i18n'
+import { fmtQty, parseQty } from '../../lib/format'
+import type { Ingredient, Lang, Recipe, RecipeId, TFunc } from '../../types'
 
-export default function RecipeEditor({ t, lang, draft, onCancel, onSave, showToast }) {
+/** Draft passed into the editor (steps as a newline string for the textarea). */
+export interface EditorDraft {
+  id: RecipeId
+  isEdit: boolean
+  sv: string
+  en: string
+  day: string
+  mark: string
+  weeks: string
+  ingredients: Ingredient[]
+  steps: string
+}
+
+/** Ingredient row while editing — keeps a free-text quantity field. */
+type IngRow = {
+  sv: string
+  en: string | null
+  qty?: number | null
+  unit: string
+  cat: string
+  qtyText: string
+}
+
+type IngField = 'sv' | 'en' | 'qtyText' | 'unit' | 'cat'
+
+interface RecipeEditorProps {
+  t: TFunc
+  lang: Lang
+  draft: EditorDraft
+  onCancel: () => void
+  onSave: (rec: Recipe) => void
+  showToast: (msg: string) => void
+}
+
+export default function RecipeEditor({ t, lang, draft, onCancel, onSave, showToast }: RecipeEditorProps) {
   const [sv, setSv] = useState(draft.sv)
   const [en, setEn] = useState(draft.en)
   const [day, setDay] = useState(draft.day)
   const [mark, setMark] = useState(draft.mark)
   const [steps, setSteps] = useState(draft.steps)
-  const [ings, setIngs] = useState(
+  const [ings, setIngs] = useState<IngRow[]>(
     draft.ingredients.map((i) => ({ ...i, qtyText: i.qty == null ? '' : fmtQty(i.qty, lang) }))
   )
 
-  const setIng = (idx, field, value) =>
+  const setIng = (idx: number, field: IngField, value: string) =>
     setIngs((list) => list.map((i, n) => (n === idx ? { ...i, [field]: value } : i)))
   const addRow = () => setIngs((l) => [...l, { sv: '', en: '', qtyText: '', unit: '', cat: 'Övrigt' }])
-  const rmRow = (idx) => setIngs((l) => {
+  const rmRow = (idx: number) => setIngs((l) => {
     const next = l.filter((_, n) => n !== idx)
     return next.length ? next : [{ sv: '', en: '', qtyText: '', unit: '', cat: 'Övrigt' }]
   })
 
   const save = () => {
-    const ingredients = ings
+    const ingredients: Ingredient[] = ings
       .filter((i) => i.sv.trim())
       .map((i) => ({ sv: i.sv.trim(), en: i.en || '', qty: parseQty(i.qtyText), unit: i.unit.trim(), cat: i.cat }))
     if (!sv.trim() || !ingredients.length) { showToast(t('need_name')); return }

@@ -1,0 +1,15 @@
+/* Kopperdalen Kök — stylesheet entry point.
+   Plain global CSS split by concern; class names match the markup.
+   Imported once from main.tsx. Order matters for the cascade. */
+@import './tokens.css';
+@import './base.css';
+@import './header.css';
+@import './nav.css';
+@import './catalog.css';
+@import './detail.css';
+@import './planner.css';
+@import './shopping.css';
+@import './modal.css';
+@import './forms.css';
+@import './toast.css';
+@import './motion.css';

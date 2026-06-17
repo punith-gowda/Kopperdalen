@@ -1,0 +1,33 @@
+/* Reset, document, shared layout + widgets used across views.
+   Sizing follows the 50+ rules: ≥44px targets, large type, text labels. */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:17px}
+body{
+  font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.5;
+  padding-bottom:calc(86px + env(safe-area-inset-bottom));
+}
+.wrap{max-width:780px;margin:0 auto;padding:0 16px}
+button{font-family:inherit}
+:focus-visible{outline:2.5px solid var(--gold);outline-offset:2px}
+.display{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;letter-spacing:0}
+
+/* Page heads (shared by every view) */
+.pagehead{padding:22px 0 6px}
+.pagehead h2{font-size:1.7rem;font-weight:700;line-height:1.2;font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;color:var(--accent-deep)}
+.pagehead p{color:var(--muted);font-size:.9rem;margin-top:4px}
+.pagehead.rowed{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.newbtn{border:0;background:var(--accent);color:#fff;border-radius:999px;padding:12px 18px;font-size:.92rem;font-weight:700;cursor:pointer;flex-shrink:0}
+.newbtn:active{background:var(--accent-deep)}
+
+/* Shared widgets */
+.tag{background:var(--accent-soft);color:var(--accent);font-size:.74rem;font-weight:700;border-radius:999px;padding:4px 11px}
+.tag.own{background:#F0EBDD;color:#7A5B12}
+.empty{padding:48px 16px;text-align:center;color:var(--muted);font-size:.95rem;line-height:1.5}
+.totline{text-align:center;color:var(--muted);font-size:.84rem;margin-top:14px}
+
+/* Number inputs + the servings field (used in detail, planner, modals) */
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.srvin{width:66px;text-align:center;font-size:1.1rem;font-weight:700;border:1.5px solid var(--line);border-radius:10px;padding:9px 2px;background:var(--card);color:var(--ink)}
+.servbar .srvin{border-color:transparent;background:var(--card)}

@@ -1,0 +1,26 @@
+/* Search & filters */
+.searchrow{position:sticky;top:65px;z-index:25;background:var(--bg);padding:10px 0 6px}
+.searchbox{display:flex;align-items:center;background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:12px 16px;gap:10px}
+.searchbox:focus-within{border-color:var(--accent)}
+.searchbox svg{width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0}
+.searchbox input{border:0;outline:0;flex:1;font-size:1.02rem;background:none;color:var(--ink);min-width:0}
+.searchbox input::placeholder{color:var(--muted)}
+.searchbox .clear{border:0;background:var(--line);border-radius:999px;width:28px;height:28px;cursor:pointer;font-size:.9rem;color:var(--ink);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:10px 18px;font-size:.9rem;font-weight:600;color:var(--ink);cursor:pointer;white-space:nowrap}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.resultcount{font-size:.78rem;color:var(--muted);padding:6px 2px 0}
+
+/* Recipe cards */
+.cards{display:flex;flex-direction:column;gap:10px;padding:8px 0 24px}
+.rcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;cursor:pointer;box-shadow:var(--shadow)}
+.rcard:active{border-color:var(--accent)}
+.rcard .topline{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.rcard .daylbl{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:4px 10px}
+.rcard .fav-ind{color:var(--danger);font-size:.85rem;line-height:1}
+.rcard h3{font-size:1.08rem;font-weight:650;line-height:1.3;letter-spacing:-.01em}
+.rcard .sub{font-size:.86rem;color:var(--muted);margin-top:2px;line-height:1.35}
+.rcard .meta{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:.78rem;color:var(--muted);flex-wrap:wrap}
+.mark{font-size:.9rem}
+.stars-mini{color:var(--gold);letter-spacing:1px;font-size:.74rem}

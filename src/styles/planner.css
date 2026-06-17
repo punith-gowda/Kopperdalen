@@ -1,0 +1,27 @@
+/* Planner (week nav is shared with the shopping list) */
+.weeknav{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;margin-top:10px;box-shadow:var(--shadow)}
+.weeknav button{border:0;background:var(--accent-soft);color:var(--accent);border-radius:10px;width:48px;height:48px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.weeknav button:active{background:var(--accent);color:#fff}
+.weeknav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.weeknav .wk{text-align:center}
+.weeknav .wk b{display:block;font-size:1.1rem;letter-spacing:-.01em}
+.weeknav .wk small{color:var(--muted);font-size:.76rem}
+.dayblock{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-top:12px;overflow:hidden;box-shadow:var(--shadow)}
+.dayblock .dh{display:flex;align-items:baseline;justify-content:space-between;padding:12px 16px 10px;background:var(--accent-soft);border-bottom:1px solid var(--line)}
+.dayblock .dh h3{font-size:1.05rem;font-weight:700;color:var(--accent-deep);font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif}
+.dayblock .dh small{font-size:.76rem;color:var(--accent);font-weight:700}
+.slot{padding:14px 16px;border-bottom:1px solid var(--line)}
+.slot:last-of-type{border-bottom:0}
+.slot.filled{display:flex;flex-direction:column;align-items:stretch;gap:10px}
+.slot .toprow{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.slot .sn{flex-shrink:0;width:24px;height:24px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:.74rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.slot .toprow .nm{font-size:1.05rem;font-weight:650;line-height:1.35;flex:1}
+.slot .ctrlrow{display:flex;align-items:center;justify-content:space-between;gap:6px;background:var(--bg);border-radius:10px;padding:8px}
+.slot .srvlbl{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.slot .srv{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.slot .srv button{width:38px;height:38px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-weight:700;color:var(--accent);font-size:1.15rem;line-height:1}
+.slot .srv .srvin{width:54px}
+.slot .rm{border:0;background:none;color:var(--danger);font-size:.82rem;font-weight:700;cursor:pointer;flex-shrink:0;padding:10px 4px}
+.addday{display:block;width:calc(100% - 32px);margin:12px 16px;border:1.5px solid var(--accent);background:var(--card);color:var(--accent);border-radius:10px;padding:14px;font-size:1rem;font-weight:700;cursor:pointer}
+.addday:active{background:var(--accent-soft)}
+.plannerfoot{display:flex;gap:8px;margin-top:14px}

@@ -1,8 +1,18 @@
 import { useMemo, useState } from 'react'
-import { DAYS_EN, dishName, dishAlt } from '../i18n'
-import SearchIcon from './SearchIcon'
+import { DAYS_EN, dishName, dishAlt } from '../../i18n'
+import SearchIcon from '../../components/icons/SearchIcon'
+import type { AppData, Lang, Recipe, RecipeId, TFunc } from '../../types'
 
-export default function Catalog({ t, lang, recipes, data, onOpen, onNew }) {
+interface CatalogProps {
+  t: TFunc
+  lang: Lang
+  recipes: Recipe[]
+  data: AppData
+  onOpen: (id: RecipeId) => void
+  onNew: () => void
+}
+
+export default function Catalog({ t, lang, recipes, data, onOpen, onNew }: CatalogProps) {
   const [query, setQuery] = useState('')
   const [fDay, setFDay] = useState('')
   const [fFav, setFFav] = useState(false)
@@ -22,7 +32,7 @@ export default function Catalog({ t, lang, recipes, data, onOpen, onNew }) {
       .sort((a, b) => dishName(a, lang).localeCompare(dishName(b, lang), lang))
   }, [recipes, query, fDay, fFav, data.favs, lang])
 
-  const chip = (label, on, onClick, cls = '') => (
+  const chip = (label: string, on: boolean, onClick: () => void, cls = '') => (
     <button key={label} className={`chip ${cls} ${on ? 'on' : ''}`} onClick={onClick}>{label}</button>
   )
 

@@ -1,0 +1,33 @@
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(30,34,41,.4);z-index:60;display:flex;align-items:flex-end;justify-content:center}
+@media(min-width:600px){.modal-bg{align-items:center}}
+.modal{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:22px 18px calc(22px + env(safe-area-inset-bottom));max-height:85vh;overflow-y:auto;box-shadow:var(--elev)}
+@media(min-width:600px){.modal{border-radius:20px}}
+.modal h3{font-size:1.2rem;font-weight:700;margin-bottom:4px;letter-spacing:-.01em}
+.modal .sub{color:var(--muted);font-size:.88rem;margin-bottom:14px}
+.lbl2{font-size:.74rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px}
+.optgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:6px}
+.optgrid button{border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:14px 2px;font-size:.88rem;font-weight:700;cursor:pointer;color:var(--ink)}
+.optgrid button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.optgrid button:disabled{opacity:.35;cursor:default}
+.presetchips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.presetchips button{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:12px 19px;font-size:1rem;font-weight:700;cursor:pointer;color:var(--ink)}
+.presetchips button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.servpick{display:flex;align-items:center;justify-content:center;gap:18px}
+.servpick button{width:46px;height:46px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);font-size:1.35rem;font-weight:700;color:var(--accent);cursor:pointer}
+.modalrow{display:flex;gap:8px;margin-top:18px}
+.btn-primary{flex:1;background:var(--accent);color:#fff;border:0;border-radius:var(--r);padding:16px;font-size:1.02rem;font-weight:700;cursor:pointer}
+.btn-primary:active{background:var(--accent-deep)}
+.btn-ghost{flex:1;border:1.5px solid var(--line);background:var(--card);border-radius:var(--r);padding:16px;font-size:1.02rem;font-weight:700;cursor:pointer;color:var(--ink)}
+.picker-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.picker-list .pk{border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:15px;text-align:left;cursor:pointer;font-size:1rem;font-weight:600;color:var(--ink);line-height:1.4;flex-shrink:0}
+.picker-list .pk:active{border-color:var(--accent);background:var(--accent-soft)}
+
+/* Pick-dish modal: head and search stay fixed, only the list scrolls */
+.pickmodal{padding:0;height:80vh;display:flex;flex-direction:column;overflow:hidden}
+.pickmodal .modalhead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:20px 18px 0}
+.pickmodal .modalhead .sub{margin-bottom:0}
+.closebtn{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:9px 16px;font-size:.88rem;font-weight:700;color:var(--ink);cursor:pointer;flex-shrink:0;min-height:44px}
+.pickmodal .searchwrap{padding:14px 18px;border-bottom:1px solid var(--line)}
+.pickmodal .picker-list{flex:1;overflow-y:auto;overscroll-behavior:contain;margin:0;padding:12px 18px calc(18px + env(safe-area-inset-bottom));background:var(--bg)}
+.pkgroup{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);padding:8px 2px 2px;flex-shrink:0}
