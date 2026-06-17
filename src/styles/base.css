@@ -5,8 +5,10 @@ html{font-size:17px}
 body{
   font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   background:var(--bg);color:var(--ink);line-height:1.5;
-  padding-bottom:calc(86px + env(safe-area-inset-bottom));
 }
+/* Clearance for the fixed bottom nav — only on the app content, not the
+   login/splash screens (which render no <main> and no nav). */
+main{padding-bottom:calc(86px + env(safe-area-inset-bottom))}
 .wrap{max-width:780px;margin:0 auto;padding:0 16px}
 button{font-family:inherit}
 :focus-visible{outline:2.5px solid var(--gold);outline-offset:2px}
