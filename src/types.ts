@@ -1,13 +1,15 @@
 // Shared domain types for the whole app.
 //
-// Data shape mirrors src/data/recipes.json and src/lib/storage.js exactly —
-// do not change these without a localStorage migration plan (see CLAUDE.md).
+// Domain types for the app. Recipes live in the Firestore `recipes` collection
+// (seeded once from src/data/recipes.json); user state lives in the shared
+// `restaurant/kopperdalen` document. See lib/cloud.ts.
 
 export type Lang = 'sv' | 'en'
 
-// Base catalogue recipes use numeric ids (recipes.json); in-app recipes use
-// string ids ('c' + timestamp). Both end up as object keys (coerced to string).
-export type RecipeId = number | string
+// All recipes live in the Firestore `recipes` collection; the id is the
+// Firestore document id. Seeded recipes use their original number stringified
+// ("1".."168"); recipes created in-app use 'c' + timestamp.
+export type RecipeId = string
 
 export interface Ingredient {
   sv: string
@@ -24,10 +26,12 @@ export interface Recipe {
   day: string // English weekday, or other label (e.g. "Dipsås"), or ''
   mark: string
   weeks: string
-  custom?: boolean
   ingredients: Ingredient[]
   steps: string[]
 }
+
+/** Recipe fields stored in Firestore (the id is the document id, not a field). */
+export type RecipeDoc = Omit<Recipe, 'id'>
 
 /** One planned dish: plans[weekKey]["{day}-{slot}"] = { id, servings } */
 export interface PlanEntry {
@@ -40,7 +44,6 @@ export interface AppData {
   favs: Record<string, true>
   ratings: Record<string, number>
   checked: Record<string, Record<string, true>>
-  customRecipes: Recipe[]
   servPrefs: Record<string, number>
 }
 

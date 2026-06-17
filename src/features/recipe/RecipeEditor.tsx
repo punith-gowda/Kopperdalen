@@ -66,7 +66,6 @@ export default function RecipeEditor({ t, lang, draft, onCancel, onSave, showToa
       en: en.trim() || null,
       day, mark,
       weeks: draft.weeks || '',
-      custom: true,
       ingredients,
       steps: steps.split('\n').map((s) => s.replace(/^\s*\d+[.)]\s*/, '').trim()).filter(Boolean),
     })

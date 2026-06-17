@@ -81,7 +81,6 @@ export default function Catalog({ t, lang, recipes, data, onOpen, onNew }: Catal
               </h3>
               <div className="sub">{dishAlt(r, lang)}</div>
               <div className="meta">
-                {r.custom && <span className="tag own">{t('own')}</span>}
                 {rt > 0 && <span className="stars-mini">{'★'.repeat(rt)}{'☆'.repeat(5 - rt)}</span>}
                 <span>{r.ingredients.length} {t('ingredients').toLowerCase()}</span>
                 {r.weeks && <span>· {r.weeks}</span>}

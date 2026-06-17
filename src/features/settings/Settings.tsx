@@ -6,9 +6,10 @@ interface SettingsProps {
   onExport: () => void
   onImport: (file: File) => void
   onBack: () => void
+  onSignOut?: () => void
 }
 
-export default function Settings({ t, onExport, onImport, onBack }: SettingsProps) {
+export default function Settings({ t, onExport, onImport, onBack, onSignOut }: SettingsProps) {
   const fileRef = useRef<HTMLInputElement>(null)
   return (
     <>
@@ -26,6 +27,17 @@ export default function Settings({ t, onExport, onImport, onBack }: SettingsProp
           />
         </div>
       </div>
+      {onSignOut && (
+        <div className="section account">
+          <h3>{t('account_title')}</h3>
+          <button
+            className="dangerbtn signoutbtn"
+            onClick={() => { if (window.confirm(t('sign_out_confirm'))) onSignOut() }}
+          >
+            {t('sign_out')}
+          </button>
+        </div>
+      )}
     </>
   )
 }

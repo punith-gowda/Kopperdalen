@@ -1,12 +1,11 @@
 // Firebase initialization — single shared dataset for Restaurang Kopperdalen.
 //
-// NOT WIRED INTO THE APP YET. This file only sets up the Firebase client.
-// The migration of src/lib/storage.js (onSnapshot subscribe + debounced
-// setDoc) and the App.jsx wiring are the next step — see CLAUDE.md plan.
-//
 // Config comes from Vite env vars (.env.local, git-ignored). The web config
-// is not a secret — real protection lives in Firestore security rules that
-// lock the shared document to the one restaurant auth user.
+// is not a secret — real protection lives in the Firestore security rules
+// (firestore.rules) that lock the shared document to the one restaurant user.
+//
+// When the env vars are absent the app runs in local-only mode (no cloud,
+// no login) — see isFirebaseConfigured.
 
 import { initializeApp } from 'firebase/app'
 import {
@@ -25,17 +24,21 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-export const app = initializeApp(firebaseConfig)
+// True once .env.local is filled in. Until then the app stays local-only.
+export const isFirebaseConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId)
+
+const app = isFirebaseConfigured ? initializeApp(firebaseConfig) : undefined
 
 // Offline persistence: the app keeps working with no signal and syncs on
 // reconnect. Single-tab manager is enough for a kitchen device.
-export const db = initializeFirestore(app, {
-  localCache: persistentLocalCache({ tabManager: persistentSingleTabManager() }),
-})
+export const db = app
+  ? initializeFirestore(app, {
+      localCache: persistentLocalCache({ tabManager: persistentSingleTabManager(undefined) }),
+    })
+  : undefined
 
-export const auth = getAuth(app)
+export const auth = app ? getAuth(app) : undefined
 
-// The one shared document every device reads and writes.
-// Path: restaurant/kopperdalen  (collection / docId)
+// The one shared document every device reads and writes (restaurant/kopperdalen).
 export const SHARED_COLLECTION = 'restaurant'
 export const SHARED_DOC_ID = 'kopperdalen'

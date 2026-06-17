@@ -39,7 +39,6 @@ export default function RecipeDetail({
         <div className="sub">{dishAlt(r, lang)}</div>
         <div className="row">
           {di >= 0 && <span className="tag">{t('days')[di]}</span>}
-          {r.custom && <span className="tag own">{t('own')}</span>}
           {r.weeks && <span className="tag">{t('weeks_on_menu')}: {r.weeks}</span>}
           <button className={`favbtn ${fav ? 'on' : ''}`} onClick={() => onFav(r.id)}>
             <span className="h">{fav ? '♥' : '♡'}</span> {t('fav')}
@@ -52,13 +51,9 @@ export default function RecipeDetail({
           ))}
         </div>
         <div className="detailactions">
+          <button className="ghostbtn" onClick={() => onEdit(r)}>{t('edit')}</button>
           <button className="ghostbtn" onClick={() => onDuplicate(r)}>{t('duplicate')}</button>
-          {r.custom && (
-            <>
-              <button className="ghostbtn" onClick={() => onEdit(r)}>{t('edit')}</button>
-              <button className="dangerbtn" onClick={() => onDelete(r.id)}>{t('del')}</button>
-            </>
-          )}
+          <button className="dangerbtn" onClick={() => onDelete(r.id)}>{t('del')}</button>
         </div>
       </div>
 

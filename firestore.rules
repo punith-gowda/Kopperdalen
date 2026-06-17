@@ -1,0 +1,27 @@
+rules_version = '2';
+
+// Single shared dataset for Restaurang Kopperdalen.
+// Everything is locked to the one shared restaurant account — replace the UID
+// below with that user's UID (Firebase console → Authentication → Users → copy
+// "User UID"). Email/Password lets the client create accounts, so we must pin
+// the specific UID rather than just `request.auth != null`.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isRestaurant() {
+      return request.auth != null
+        && request.auth.uid == '5ofyt17mjRPIRGwGyYubpdn260o1';
+    }
+
+    match /restaurant/{docId} {
+      allow read, write: if isRestaurant();
+    }
+    match /recipes/{recipeId} {
+      allow read, write: if isRestaurant();
+    }
+
+    // Everything else is denied.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

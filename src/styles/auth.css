@@ -1,0 +1,30 @@
+/* Login gate + splash (shown before the main app when cloud sync is on) */
+.authscreen{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--accent)}
+.authcard{position:relative;width:100%;max-width:400px;background:var(--card);border-radius:18px;border-top:4px solid var(--gold);padding:28px 22px calc(26px + env(safe-area-inset-bottom));box-shadow:var(--elev)}
+.authcard .authlang{position:absolute;top:18px;right:18px;border-color:var(--line)}
+.authcard .authlang button{color:var(--muted)}
+.authcard .authlang button.on{background:var(--accent);color:#fff}
+.authbrand small{display:block;font-size:.7rem;color:var(--muted);letter-spacing:.16em;text-transform:uppercase}
+.authbrand h1{font-size:1.4rem;font-weight:700;color:var(--accent-deep);font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;margin-top:4px}
+.authhint{font-size:.92rem;color:var(--muted);line-height:1.45;margin:14px 0 4px}
+.authcard form{display:flex;flex-direction:column}
+.authcard label.lbl2{margin:16px 0 6px}
+.authcard input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:14px 13px;font-size:1.05rem;background:var(--card);color:var(--ink);font-family:inherit}
+.authcard input:focus{border-color:var(--accent);outline:none}
+.autherr{margin-top:14px;background:var(--danger-soft);color:var(--danger);font-size:.9rem;font-weight:600;border-radius:10px;padding:11px 13px}
+.authsubmit{margin-top:20px;padding:16px}
+.authsubmit:disabled{opacity:.6;cursor:default}
+
+.splash{display:flex;flex-direction:column;align-items:center;gap:18px;color:var(--cream)}
+.splash small{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;opacity:.85}
+.splash p{font-size:.95rem;opacity:.9}
+.spinner{width:30px;height:30px;border-radius:999px;border:3px solid rgba(251,247,236,.3);border-top-color:var(--cream)}
+@media(prefers-reduced-motion:no-preference){
+  .spinner{animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+}
+
+/* Account section in Settings */
+.account p{font-size:.86rem;color:var(--muted);line-height:1.45}
+.account .signedin{font-weight:700;color:var(--ink)}
+.signoutbtn{margin-top:12px;width:100%}

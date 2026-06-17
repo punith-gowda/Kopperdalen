@@ -1,11 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { HashRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import RECIPES_RAW from './data/recipes.json'
 import { T } from './i18n'
 import { isoWeekKey } from './lib/week'
-import { exportBackup, loadData, parseBackup, saveData } from './lib/storage'
+import { emptyData, exportBackup, loadLang, parseBackup, saveLang } from './lib/storage'
+import { isFirebaseConfigured } from './lib/firebase'
+import {
+  pushData,
+  removeRecipe,
+  signOutUser,
+  subscribe,
+  subscribeRecipes,
+  upsertRecipe,
+  watchAuth,
+  type User,
+} from './lib/cloud'
 import { ICONS, NavIcon } from './components/icons/NavIcon'
 import Toast from './components/Toast'
+import LoginGate, { Splash } from './features/auth/LoginGate'
 import Catalog from './features/catalog/Catalog'
 import RecipeDetailPage from './features/recipe/RecipeDetailPage'
 import RecipeEditorPage from './features/recipe/RecipeEditorPage'
@@ -16,10 +27,6 @@ import AddToPlanModal from './features/planner/AddToPlanModal'
 import PickDishModal from './features/planner/PickDishModal'
 import type { AppData, Lang, Recipe, RecipeId, RecipeMap, TFunc } from './types'
 
-// Base catalogue. Cast through unknown: the JSON's inferred literal type is
-// narrower than Recipe (e.g. optional `custom`), but the shape matches.
-const RECIPES = RECIPES_RAW as unknown as Recipe[]
-
 type ModalState =
   | { type: 'add'; recipeId: RecipeId }
   | { type: 'pick'; day: number; slot: number }
@@ -28,52 +35,128 @@ type ModalState =
 export default function App() {
   return (
     <HashRouter>
-      <Shell />
+      <Root />
     </HashRouter>
   )
 }
 
-function Shell() {
+/**
+ * Owns auth + the two cloud subscriptions (the shared state document and the
+ * recipes collection). Renders the login gate / splash until both are ready,
+ * then hands fully-loaded data to Shell.
+ */
+function Root() {
+  const [user, setUser] = useState<User | null | undefined>(isFirebaseConfigured ? undefined : null)
+  const [data, setData] = useState<AppData | null>(null)
+  const [recipes, setRecipes] = useState<Recipe[] | null>(null)
+  const [lang, setLangState] = useState<Lang>(loadLang())
+  const bootstrapped = useRef(false)
+
+  useEffect(() => {
+    if (!isFirebaseConfigured) return
+    return watchAuth(setUser)
+  }, [])
+
+  useEffect(() => {
+    if (!user) { setData(null); setRecipes(null); bootstrapped.current = false; return }
+    bootstrapped.current = false
+    const unsubData = subscribe((snap) => {
+      if (!bootstrapped.current) {
+        bootstrapped.current = true
+        if (!snap.exists) { const seed = emptyData(); setData(seed); pushData(seed); return }
+      }
+      if (snap.fromServer) setData(snap.data)
+    })
+    const unsubRecipes = subscribeRecipes(setRecipes)
+    return () => { unsubData(); unsubRecipes() }
+  }, [user])
+
+  const update = (fn: (d: AppData) => void) => setData((prev) => {
+    if (!prev) return prev
+    const nd = structuredClone(prev)
+    fn(nd)
+    pushData(nd)
+    return nd
+  })
+
+  const replaceData = (d: AppData) => { setData(d); pushData(d) }
+
+  // Recipe writes go to the recipes collection, with an optimistic local merge
+  // so the just-saved recipe is navigable before the snapshot round-trips.
+  const saveRecipe = (rec: Recipe) => {
+    upsertRecipe(rec).catch(() => {})
+    setRecipes((prev) => {
+      const list = prev ? [...prev] : []
+      const i = list.findIndex((r) => r.id === rec.id)
+      if (i >= 0) list[i] = rec
+      else list.push(rec)
+      return list
+    })
+  }
+
+  const deleteRecipe = (id: RecipeId) => {
+    removeRecipe(id).catch(() => {})
+    setRecipes((prev) => (prev ? prev.filter((r) => r.id !== id) : prev))
+  }
+
+  const setLang = (l: Lang) => { setLangState(l); saveLang(l) }
+
+  if (user === undefined) return <Splash lang={lang} />
+  if (!user) return <LoginGate lang={lang} setLang={setLang} />
+  if (!data || !recipes) return <Splash lang={lang} connecting />
+
+  return (
+    <Shell
+      data={data} recipes={recipes} lang={lang} setLang={setLang}
+      update={update} replaceData={replaceData}
+      saveRecipe={saveRecipe} deleteRecipe={deleteRecipe}
+      onSignOut={signOutUser}
+    />
+  )
+}
+
+interface ShellProps {
+  data: AppData
+  recipes: Recipe[]
+  lang: Lang
+  setLang: (l: Lang) => void
+  update: (fn: (d: AppData) => void) => void
+  replaceData: (d: AppData) => void
+  saveRecipe: (rec: Recipe) => void
+  deleteRecipe: (id: RecipeId) => void
+  onSignOut: () => void
+}
+
+function Shell({
+  data, recipes, lang, setLang,
+  update: pushUpdate, replaceData: pushReplace, saveRecipe: pushSaveRecipe, deleteRecipe: pushDeleteRecipe,
+  onSignOut,
+}: ShellProps) {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const initial = useMemo(() => loadData(), [])
-  const [data, setData] = useState<AppData>(initial.data)
-  const [lang, setLang] = useState<Lang>(initial.lang)
   const [weekKey, setWeekKey] = useState(isoWeekKey(new Date()))
   const [modal, setModal] = useState<ModalState>(null)
   const [toast, setToast] = useState<string | null>(null)
   const [savedFlash, setSavedFlash] = useState(false)
 
   const t: TFunc = (k) => T[lang][k]
-  const allRecipes = useMemo(() => [...RECIPES, ...data.customRecipes], [data.customRecipes])
   const byId = useMemo<RecipeMap>(() => {
     const m: RecipeMap = {}
-    allRecipes.forEach((r) => (m[r.id] = r))
+    recipes.forEach((r) => (m[r.id] = r))
     return m
-  }, [allRecipes])
+  }, [recipes])
 
-  // persist on every data/lang change (debounced inside saveData)
-  const first = useRef(true)
-  useEffect(() => {
-    if (first.current) { first.current = false; return }
-    saveData(data, lang, () => {
-      setSavedFlash(true)
-      setTimeout(() => setSavedFlash(false), 1500)
-    })
-  }, [data, lang])
+  const flash = () => {
+    setSavedFlash(true)
+    setTimeout(() => setSavedFlash(false), 1500)
+  }
+  const update = (fn: (d: AppData) => void) => { pushUpdate(fn); flash() }
 
   const showToast = (msg: string) => {
     setToast(msg)
     setTimeout(() => setToast(null), 1800)
   }
-
-  // ---- mutations (single entry point keeps saving consistent) ----
-  const update = (fn: (d: AppData) => void) => setData((d) => {
-    const nd = structuredClone(d)
-    fn(nd)
-    return nd
-  })
 
   const planFor = (d: AppData, key = weekKey) => d.plans[key] || (d.plans[key] = {})
 
@@ -97,7 +180,6 @@ function Shell() {
     return true
   }
 
-  // ---- navigation helpers (close any open modal, reset scroll) ----
   const navTo = (path: string) => {
     setModal(null)
     navigate(path)
@@ -105,23 +187,16 @@ function Shell() {
   }
 
   const saveRecipe = (rec: Recipe) => {
-    update((d) => {
-      const idx = d.customRecipes.findIndex((r) => r.id === rec.id)
-      if (idx >= 0) d.customRecipes[idx] = rec
-      else d.customRecipes.push(rec)
-    })
+    pushSaveRecipe(rec)
+    flash()
     showToast(t('recipe_saved'))
     navTo('/recipes/' + rec.id)
   }
 
   const deleteRecipe = (id: RecipeId) => {
     if (!window.confirm(t('delete_confirm'))) return
-    update((d) => {
-      d.customRecipes = d.customRecipes.filter((r) => r.id !== id)
-      delete d.favs[id]
-      delete d.ratings[id]
-      delete d.servPrefs[id]
-    })
+    pushDeleteRecipe(id)
+    update((d) => { delete d.favs[id]; delete d.ratings[id]; delete d.servPrefs[id] })
     showToast(t('recipe_deleted'))
     navTo('/recipes')
   }
@@ -132,8 +207,9 @@ function Shell() {
       try {
         const res = parseBackup(String(reader.result))
         if (!window.confirm(t('import_confirm'))) return
-        setData(res.data)
+        pushReplace(res.data)
         setLang(res.lang)
+        flash()
         showToast(t('import_done'))
       } catch {
         showToast(t('import_bad'))
@@ -142,7 +218,6 @@ function Shell() {
     reader.readAsText(file)
   }
 
-  // ---- active-tab detection for the bottom nav ----
   const path = location.pathname
   const isRecipes = path === '/' || path.startsWith('/recipes')
   const isPlan = path.startsWith('/plan')
@@ -179,7 +254,7 @@ function Shell() {
               path="/recipes"
               element={
                 <Catalog
-                  t={t} lang={lang} recipes={allRecipes} data={data}
+                  t={t} lang={lang} recipes={recipes} data={data}
                   onOpen={(id) => navTo('/recipes/' + id)}
                   onNew={() => navTo('/recipes/new')}
                 />
@@ -187,21 +262,15 @@ function Shell() {
             />
             <Route
               path="/recipes/new"
-              element={
-                <RecipeEditorPage t={t} lang={lang} byId={byId} mode="new" onSave={saveRecipe} showToast={showToast} />
-              }
+              element={<RecipeEditorPage t={t} lang={lang} byId={byId} mode="new" onSave={saveRecipe} showToast={showToast} />}
             />
             <Route
               path="/recipes/:id/edit"
-              element={
-                <RecipeEditorPage t={t} lang={lang} byId={byId} mode="edit" onSave={saveRecipe} showToast={showToast} />
-              }
+              element={<RecipeEditorPage t={t} lang={lang} byId={byId} mode="edit" onSave={saveRecipe} showToast={showToast} />}
             />
             <Route
               path="/recipes/:id/duplicate"
-              element={
-                <RecipeEditorPage t={t} lang={lang} byId={byId} mode="duplicate" onSave={saveRecipe} showToast={showToast} />
-              }
+              element={<RecipeEditorPage t={t} lang={lang} byId={byId} mode="duplicate" onSave={saveRecipe} showToast={showToast} />}
             />
             <Route
               path="/recipes/:id"
@@ -255,7 +324,7 @@ function Shell() {
             />
             <Route
               path="/settings"
-              element={<Settings t={t} onExport={() => exportBackup(data, lang)} onImport={importBackup} onBack={() => navigate(-1)} />}
+              element={<Settings t={t} onExport={() => exportBackup(data, lang)} onImport={importBackup} onBack={() => navigate(-1)} onSignOut={onSignOut} />}
             />
             <Route path="*" element={<Navigate to="/recipes" replace />} />
           </Routes>
@@ -288,7 +357,7 @@ function Shell() {
       )}
       {modal?.type === 'pick' && (
         <PickDishModal
-          t={t} lang={lang} recipes={allRecipes} day={modal.day}
+          t={t} lang={lang} recipes={recipes} day={modal.day}
           onCancel={() => setModal(null)}
           onPick={(id) => {
             update((d) => {
